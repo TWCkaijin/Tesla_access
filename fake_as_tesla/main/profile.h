@@ -13,7 +13,14 @@ class profile{
       
 
     }
-
+    bool is_prime(int num){
+      for(int i=2;i<=sqrt(num);i++){
+        if(num%i==0){
+          return false;
+        }
+      }
+      return true;
+    }
     bool verify_finish(){
       if(prime!=-1&&generator!=-1&&private_key!=-1&&pub!=-1&&sym_key!=-1&&cli_pub!=-1){
         return true;
@@ -22,18 +29,12 @@ class profile{
     }
     void set_pg(){
       if(prime==-1&&generator==-1){
-        generator = random(100);
+        generator = random(20);
         bool flag = true;
         while(flag){
           prime = random(1000);
-          for(int i=2;i<sqrt(prime);i++){
-            if(prime%i==0){
-              break;
-            }else if(i==sqrt(prime)-1){
-              flag=false;
-              break;
-            }
-          }
+          flag = !is_prime(prime);
+          Serial.println(prime);
         } 
 
       }
@@ -41,8 +42,9 @@ class profile{
 
     void set_pub(){
       if(pub==-1&&prime!=-1&&generator!=-1){
-        private_key = random(100);
+        private_key = random(10);
         pub = ((long long)pow(generator,private_key))%prime;
+        Serial.println("Pub set");
       }else {
         return;
       }
