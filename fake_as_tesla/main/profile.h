@@ -10,9 +10,38 @@ class profile{
       generator=-1;
       cli_pub = -1;
       sym_key = -1;
-      
-
+      car_id = "1234567890";
+      access_token = -1;
+      count = 0;
+      att=-1;
     }
+
+    int count = 0;
+
+    void set_access_token(){
+      access_token = random(20);
+    }
+
+    bool verify_attestation(int stage,String input){
+      long long int msg=0;
+      for(int i=0;i<input.length();i++){
+        msg = msg*10+input[i];
+      }
+
+      count = stage;
+      if(stage==2){
+        long long int temp = msg/sym_key/stage/((stage-1)*access_token);
+        if(att==msg){
+          return true;
+        }
+      }else{
+        att = msg/sym_key/stage/((stage-1)*access_token);
+        return true;
+      }
+      //msg = AES_GCM(a,S,count,null)
+      //msg = AES_GCM(b,S,count,G)
+    }
+
     bool is_prime(int num){
       for(int i=2;i<=sqrt(num);i++){
         if(num%i==0){
@@ -21,12 +50,14 @@ class profile{
       }
       return true;
     }
+
     bool verify_finish(){
       if(prime!=-1&&generator!=-1&&private_key!=-1&&pub!=-1&&sym_key!=-1&&cli_pub!=-1){
         return true;
       }
       return false;
     }
+
     void set_pg(){
       if(prime==-1&&generator==-1){
         generator = random(20);
@@ -34,7 +65,6 @@ class profile{
         while(flag){
           prime = random(1000);
           flag = !is_prime(prime);
-          Serial.println(prime);
         } 
 
       }
@@ -81,7 +111,9 @@ class profile{
       return sym_key;
     }
 
-
+    String get_indicate(){
+      return car_id;
+    }
 
   private :
     int generator;
@@ -90,7 +122,9 @@ class profile{
     int pub;
     int sym_key;
     int cli_pub;
-    char car_id[10];
+    int access_token;
+    long long int att;
+    String car_id;
 };
 
 
