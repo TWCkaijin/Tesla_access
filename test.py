@@ -1,5 +1,5 @@
 import math
 
-x = 14**7
+x = 9**4%29
 
 print(x)

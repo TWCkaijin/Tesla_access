@@ -63,23 +63,33 @@ String reply(String input,String work){
     if(check_bool_forward(btr,0)&&check_work(input,ptr,0)){
       String msg = "Att ready";
       return msg;
-    }else if(check_bool_forward(btr,1)&&check_work(input,ptr,1)){
+    }else if(check_bool_forward(btr,1)&&check_work(input.substring(0,attestation_steps[1].length()),ptr,1)){
+      Serial.println("out of ATT verification 1");
       if(server.verify_attestation(1,input.substring(ptr[1].length()))){
+        Serial.println("IN ATT verification 1");
         String msg = "Success, count=" + (String)server.count;
         mySerial.write((const uint8_t*)msg.c_str(), msg.length());
-        Serial.println("IN ATT verification 1");
+        
+        delay(3000);
         return server.respond_tokenG();
       }else{
         btr[0]=false,btr[1]=false;
         Serial.println("ATT fail");
+        delay(3000);
         return "Failed, ATT reset";
       }
-    }else if(check_bool_forward(btr,2)&&check_work(input,ptr,2)){
-      if(server.verify_attestation(2,input.substring(ptr[3].length()))){
+    }else if(check_bool_forward(btr,2)&&check_work(input.substring(0,attestation_steps[2].length()),ptr,2)){
+      if(server.verify_attestation(2,input.substring(ptr[2].length()))){
         return "Access Granted";
+      }else{
+        btr[0]=false,btr[1]=false,btr[2]=false;
+        Serial.println("ATT fail");
+        delay(3000);
+        return "Failed, ATT reset";
       }
     }
   }
+  return "No command found";
 }
 
 bool check_work(String input,String list[],int index){

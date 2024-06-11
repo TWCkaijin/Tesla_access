@@ -2,7 +2,6 @@
 #include <SoftwareSerial.h>
 #include <math.h>
 #include "profile.h"
-#include <Vector.h>
 SoftwareSerial mySerial(2, 3); // RX, TX
 
 
@@ -12,7 +11,7 @@ bool* DH_steps_bool = new bool[5](0);
 String indicate_steps[] = {"Client Hello","Indicate req","Indicate get"};
 bool* indicate_steps_bool = new bool[3](0);
 
-String attestation_steps[] = {"Start att","Att1 sent:","TokenG get","Att2 sent"};
+String attestation_steps[] = {"Start att","Att1 sent:","Att2 sent:"};
 bool*  attestation_steps_bool = new bool[5](0);
 
 String token_give[] = {"Token give"};

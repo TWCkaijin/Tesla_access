@@ -21,5 +21,5 @@ print(f'att1: {att1}')
 
 token = int(input("Enter the token:"))
 real_token = token/sym_key
-att2 = token*sym_key*2
+att2 = token*sym_key*pub
 print(f'att2: {att2}')
