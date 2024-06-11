@@ -14,28 +14,34 @@ class profile{
       access_token = -1;
       count = 0;
       att=-1;
+      access_token = random(10);
     }
 
-    int count = 0;
+    int count;
 
-    void set_access_token(){
-      access_token = random(20);
+
+
+    String respond_tokenG(){
+      Serial.println("Token G gen:");
+      String temp = (String)(access_token*sym_key);
+      Serial.println("Token G gened:"+temp);
+      return temp;
     }
 
     bool verify_attestation(int stage,String input){
       long long int msg=0;
       for(int i=0;i<input.length();i++){
-        msg = msg*10+input[i];
+        msg = msg*10+input[i]-48;
       }
 
       count = stage;
       if(stage==2){
-        long long int temp = msg/sym_key/stage/((stage-1)*access_token);
-        if(att==msg){
+        int temp = msg/sym_key/sym_key/stage;
+        if(access_token==temp){
           return true;
         }
-      }else{
-        att = msg/sym_key/stage/((stage-1)*access_token);
+      }else if(stage==1){
+        att = msg/sym_key/stage;
         return true;
       }
       //msg = AES_GCM(a,S,count,null)
@@ -60,10 +66,10 @@ class profile{
 
     void set_pg(){
       if(prime==-1&&generator==-1){
-        generator = random(20);
+        generator = random(8)+2;
         bool flag = true;
         while(flag){
-          prime = random(1000);
+          prime = random(93)+7;
           flag = !is_prime(prime);
         } 
 
@@ -72,19 +78,37 @@ class profile{
 
     void set_pub(){
       if(pub==-1&&prime!=-1&&generator!=-1){
-        private_key = random(10);
-        pub = ((long long)pow(generator,private_key))%prime;
-        Serial.println("Pub set");
+        private_key = random(3)+2;
+        long temp = generator;
+        for(int i=0;i<private_key;i++){
+          temp*= temp;
+        }
+        pub = (temp%prime);
+
+        Serial.print("Private");
+        Serial.println(private_key);
+        Serial.print("Pub set");
+        Serial.println(pub);
       }else {
-        return;
+        Serial.println("Pub set error");
       }
     }
 
     void set_sym_key(){
       if(sym_key==-1&&pub!=-1&&cli_pub!=-1){
-        sym_key = ((long long)pow(cli_pub,private_key)) % prime;
-      }
 
+        long long int temp = cli_pub;
+        for(int i=0;i<private_key;i++){
+          temp*= temp;
+        }
+        sym_key = (int)(temp%prime);
+      }else{
+        Serial.println("sym key set error");
+      }
+      Serial.print("Private: ");
+      Serial.println(private_key);
+      Serial.print("Sym_key: ");
+      Serial.println(sym_key);
     }
 
     void set_cli_pub(int a){
@@ -123,7 +147,7 @@ class profile{
     int sym_key;
     int cli_pub;
     int access_token;
-    long long int att;
+    long att;
     String car_id;
 };
 

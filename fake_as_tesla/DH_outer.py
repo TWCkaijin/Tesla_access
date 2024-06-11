@@ -6,8 +6,8 @@ import time
 p = int(input("Enter the prime number:"))
 g = int(input("Enter the generator:"))
 
-b = random.randint(1,100)
-
+b = random.randint(2,5)
+print(f'b: {b}')
 pub = (g**b)%p
 
 server_pub = int(input("Enter the server's public key:"))
@@ -20,5 +20,6 @@ att1 = msg*sym_key*1
 print(f'att1: {att1}')
 
 token = int(input("Enter the token:"))
-att2 = token*sym_key*2*token
+real_token = token/sym_key
+att2 = token*sym_key*2
 print(f'att2: {att2}')

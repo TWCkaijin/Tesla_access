@@ -15,17 +15,17 @@ String reply(String input,String work){
 
     }else if(check_bool_forward(btr,2)&&check_work(input,ptr,2)){
       server.set_pub();
-      Serial.println(server.get_pub());
       String public_key = (String)server.get_pub();
       return public_key;
 
     }else if(check_bool_forward(btr,3)&&check_work(input.substring(0,DH_steps[3].length()),ptr,3)){
-      String client_public_str = input.substring(DH_steps[3].length()+1);
+      String client_public_str = input.substring(DH_steps[3].length(),input.length());
       int client_public_int = 0;
-      for(int i=0;i<client_public_str.length();i++)client_public_int = client_public_int*10 + (int)client_public_str[i];
+      for(int i=0;i<client_public_str.length();i++){
+        client_public_int = client_public_int*10 + ((int)client_public_str[i]-48);
+      }
       server.set_cli_pub(client_public_int);
       String msg = "Pub get";
-      Serial.println(msg);
       server.set_sym_key();
       return msg;
 
@@ -65,10 +65,18 @@ String reply(String input,String work){
       return msg;
     }else if(check_bool_forward(btr,1)&&check_work(input,ptr,1)){
       if(server.verify_attestation(1,input.substring(ptr[1].length()))){
-        return "Success, count=" + (String)server.count;
+        String msg = "Success, count=" + (String)server.count;
+        mySerial.write((const uint8_t*)msg.c_str(), msg.length());
+        Serial.println("IN ATT verification 1");
+        return server.respond_tokenG();
       }else{
         btr[0]=false,btr[1]=false;
-        return "Failed, stage reset";
+        Serial.println("ATT fail");
+        return "Failed, ATT reset";
+      }
+    }else if(check_bool_forward(btr,2)&&check_work(input,ptr,2)){
+      if(server.verify_attestation(2,input.substring(ptr[3].length()))){
+        return "Access Granted";
       }
     }
   }
@@ -92,9 +100,7 @@ bool check_bool_forward(bool list[],int index){
 
 void cmd_or_msg(String input){
   if(input[0]=='A'&&input[1]=='T'){
-    mySerial.println(input);
-    Serial.print("cmd sent: ");
-    Serial.println(input);
+    mySerial.write((const uint8_t*)input.c_str(), input.length());
   }else{
     sendCommand(input);
   }
