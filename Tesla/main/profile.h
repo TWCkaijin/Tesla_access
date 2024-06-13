@@ -20,13 +20,14 @@ class profile{
     int count;
 
 
-
+    // 產生第一次attestation後的token
     String respond_tokenG(){
       String temp = (String)(access_token*sym_key);
       Serial.println("Token G gened:"+temp);
       return temp;
     }
 
+    //驗證用戶的attestation
     bool verify_attestation(int stage,String input){
       long msg=0;
       for(int i=0;i<input.length();i++){
@@ -64,6 +65,7 @@ class profile{
       return true;
     }
 
+    // 驗證DH已全數完成
     bool verify_finish(){
       if(prime!=-1&&generator!=-1&&private_key!=-1&&pub!=-1&&sym_key!=-1&&cli_pub!=-1){
         return true;
