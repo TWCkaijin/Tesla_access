@@ -25,7 +25,6 @@ const int MAX_WORK_FLOW = 4;
 
 profile server;
 void setup() {
-  // 开启硬件串口和软件串口
   int seed = analogRead(A0);
   randomSeed(seed);
   Serial.begin(9600);
@@ -35,13 +34,11 @@ void setup() {
 }
 
 void loop() {
-  // 检查是否有来自串口监视器的输入
   if (Serial.available()) {
     cmd_or_msg(Serial.readString());
 
   }
-
-  // 检查是否有来自BLE模块的输入
+  
   if (mySerial.available()) {
     String client = mySerial.readString();
     String msg;
